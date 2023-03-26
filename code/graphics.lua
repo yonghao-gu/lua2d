@@ -34,7 +34,7 @@ local table_insert = table.insert
 local string_gsub = string.gsub
 local math_asin   = math.asin
 local math_deg    = math.deg
-
+local math_atan   = math.atan
 local M = {}
 
 -----------------------------------------
@@ -55,23 +55,9 @@ end
 
 --已知一点，求朝向
 function M.point_to_arc(x, y)
-    if x == 0 and y == 0 then --零向量特殊处理
-        return 0
-    end
-    local z = math_sqrt(x ^ 2 + y ^ 2)
-    local arc = math_asin(math_abs(y) / z)
-    if y >= 0 then
-        if x < 0 then
-            arc = pi - arc
-        end
-    else
-        if y < 0 then
-            if x < 0 then
-                arc = pi + arc
-            else
-                arc = pi2 - arc
-            end
-        end
+    local arc = math_atan(y,x)
+    if arc < 0 then
+        arc = arc + pi2
     end
     return arc
 end
@@ -434,9 +420,6 @@ function M.collision_circle_arc(x1, y1, r1, x2, y2, r2, rad, rad1, rad2)
     --按逻辑来说这里不会执行
     return false
 end
-
-
-
 
 
 
