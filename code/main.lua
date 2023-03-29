@@ -38,6 +38,8 @@ local menu = {
     "1:对象坐标测试",
     "2:点和图形测试",
     "3:圆和其他图形测试",
+    "4:OBB旋转矩形",
+    "5:凸边形-分离轴测试"
 }
 
 function love.draw()
@@ -45,7 +47,7 @@ function love.draw()
         local width = love.graphics.getWidth()
         local height = love.graphics.getHeight()
         x = width/4
-        y = height/2
+        y = height/3
         love.print_message(x, y, menu)
         -- for i,s in ipairs(menu) do
         --     love.graphics.print(s, x, y + i * 30)
@@ -57,6 +59,10 @@ function love.draw()
             require "test.point_geometry"
         elseif key == 3 then
             require "test.circle_geometry"
+        elseif key == 4 then
+            require "test.obb_example"
+        elseif key == 5 then
+            require "test.polygon_example"
         end
     end
 end
