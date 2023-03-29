@@ -14,7 +14,7 @@ local function dot(v1, v2)
 end
 
 local function is_cross(mina, maxa, minb, maxb)
-    return mina >= minb or mina <= maxb or maxa >= minb or maxa <= maxb
+    return (mina >= minb and mina <= maxb) or ( maxa >= minb and maxa <= maxb) or (minb >= mina and minb <= maxa ) or (maxb >= mina and maxb <= maxa ) 
 end
 
 --[x,y是坐标点，而points则是相对该坐标系的点]
@@ -46,10 +46,9 @@ function CConvex:axis_list()
     for i = 1, len do
         local point1 = self.points[i]
         local point2 = self.points[i+1] or self.points[1]
-        --偷懒直接用现成的接口，转换为坐标系后,y轴方向就是法向量
-        local rad = graphics.two_point_face(point1.x, point1.y, point2.x, point2.y)
-        local vec_x, vec_y = graphics.default_coordinate_system(rad)
-        table.insert(vecs, vec_y)
+        local distance = graphics.point_distance(point1.x, point1.y, point2.x, point2.y)
+        local vec = { x = (point2.y - point1.y)/distance,  y = (point2.x-point1.x)/distance }
+        table.insert(vecs, vec)
     end
     return vecs
 end
@@ -81,14 +80,31 @@ function CConvex:check_collision(convex)
     for _, v in ipairs(axis2) do
         table.insert(axiss, v)
     end
+    local desc = {
+        string.format("长度:%d (%f,%f)", #axiss, self.x, self.y)
+    }
+
     local points1 = self:world_points()
     local points2 = convex:world_points()
+    local tt = {}
+    for _, p in ipairs(points1) do
+        table.insert(tt, string.format("(%d-%d) ", p.x, p.y))
+    end
+    table.insert(desc, table.concat(tt, "|"))
     for _, vec in ipairs(axiss) do
         local mina,maxa = self:get_projection(vec, points1)
         local minb,maxb = convex:get_projection(vec, points2)
+
+        table.insert(desc, string.format("[%f,%f]映射：(%.2f ,%.2f) || （%.2f， %.2f）",vec.x,vec.y, mina,maxa, minb,maxb))
         if not is_cross(mina,maxa, minb,maxb) then
+            if self.draw_axis then
+                love.print_message(self.x,self.y,desc)
+            end
             return false
         end
+    end
+    if self.draw_axis then
+        love.print_message(self.x,self.y,desc)
     end
     return true
 end
@@ -101,8 +117,15 @@ function CConvex:draw()
         table.insert(points2, point.x)
         table.insert(points2, point.y)
     end
-    --points2 = {100, 100, 150, 50, 200, 100, 200, 200, 150, 250, 100, 200}
     love.graphics.polygon("line", points2)
+    if self.draw_axis then
+        local  axiss = self:axis_list()
+        for _, vec in ipairs(axiss) do
+            local x2,y2 = vec.x * 100, vec.y * 100
+            x2,y2 = graphics.trans2world_pos2(self.x, self.y, 0, x2,y2)
+            love.graphics.line(self.x, self.y, x2,y2)
+        end
+    end
 end
 
 
