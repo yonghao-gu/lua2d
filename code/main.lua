@@ -39,7 +39,8 @@ local menu = {
     "2:点和图形测试",
     "3:圆和其他图形测试",
     "4:OBB旋转矩形",
-    "5:凸边形-分离轴测试"
+    "5:凸边形-分离轴测试",
+    "6:线段相交测试",
 }
 
 function love.draw()
@@ -63,6 +64,8 @@ function love.draw()
             require "test.obb_example"
         elseif key == 5 then
             require "test.polygon_example"
+        elseif key == 6 then
+            require "test.cross_segment"
         end
     end
 end

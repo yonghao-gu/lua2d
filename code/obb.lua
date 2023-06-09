@@ -34,7 +34,7 @@ function CRect:projection(vec_x, vec_y, vec1)
     local a = dot(vec_x, vec1)
     local b = dot(vec_y, vec1)
 
-    return a * self.width/2 + b * self.height/2
+    return (a * self.width+ b * self.height)/2
 end
 
 
