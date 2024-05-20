@@ -1,4 +1,7 @@
 local graphics = require "graphics"
+local log = require "log"
+-- log.init("love.log")
+
 
 
 
@@ -6,13 +9,14 @@ local font_size = 15
 function love.load()
     local newfont = love.graphics.newFont("STXIHEI.TTF", font_size)
     love.graphics.setFont(newfont)
+    love.window.setMode(1000, 800, { fullscreen = false, resizable = true, vsync = true })  
 end
 
-function love.easy_rect(x, y, width, height, rad)
+function love.easy_rect(x, y, width, height, rad, mode)
     love.graphics.push()
     love.graphics.translate(x, y)
     love.graphics.rotate(rad)
-    love.graphics.rectangle("line", -width/2, -height/2, width, height)
+    love.graphics.rectangle(mode or "line", -width/2, -height/2, width, height)
     love.graphics.pop()
 end
 
@@ -41,6 +45,7 @@ local menu = {
     "4:OBB旋转矩形",
     "5:凸边形-分离轴测试",
     "6:线段相交测试",
+    "7:A*寻路算法",
 }
 
 function love.draw()
@@ -66,6 +71,8 @@ function love.draw()
             require "test.polygon_example"
         elseif key == 6 then
             require "test.cross_segment"
+        elseif key == 7 then
+            require "test.map_example"
         end
     end
 end
